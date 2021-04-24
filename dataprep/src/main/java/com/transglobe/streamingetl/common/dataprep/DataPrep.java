@@ -43,8 +43,8 @@ public class DataPrep {
 
 	private DbConfig dbConfig;;
 
-	public DataPrep() throws Exception {
-		dbConfig = DbConnectionUtil.getDbConnConfig("config.properties");
+	public DataPrep(String configFileName) throws Exception {
+		dbConfig = DbConnectionUtil.getDbConnConfig(configFileName);
 	}
 
 	public void truncateSourceTable(String owner, String tableName) throws Exception  {
@@ -85,14 +85,16 @@ public class DataPrep {
 
 			// insert 
 			Statement stmt = sourceConn.createStatement();
-			int i = 0;
+			int i = 0; // total count
+			int j = 0; // failure count
 			for (String sql : dataSql) {
 				i++;
 				try {
 					stmt.execute(sql);
 				
 				} catch (SQLException e) {
-					logger.info("    insert count={}, ex={}",i, ExceptionUtils.getStackTrace(e));
+					j++;
+					logger.info("    insert count={}, failure count={}, ex={}",i, j, ExceptionUtils.getStackTrace(e));
 				}
 				//stmt.addBatch(sql);
 
@@ -102,7 +104,7 @@ public class DataPrep {
 				}
 			}
 			stmt.close();
-
+			logger.info("    total count={}, failure count={}", i, j);
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -167,45 +169,5 @@ public class DataPrep {
 
 		}
 	}
-	public static void main(String[] args){
-		logger.info(">>> DataPrep t_policy_holder !!!");
-		String policyHolderSqlFile = "./data/t_policy_holder.sql";
-		
-		try {
-			DataPrep dataPrep = new DataPrep();
-			
-			dataPrep.truncateSourceTable("PMUSER", "T_POLICY_HOLDER");
-			dataPrep.insertDataIntoSource(policyHolderSqlFile, 1, null);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		logger.info(">>> DataPrep t_insured_list !!!");
-		String insuredListSqlFile = "./data/t_insured_list.sql";
-		
-		try {
-			DataPrep dataPrep = new DataPrep();
-			
-			dataPrep.truncateSourceTable("PMUSER", "T_INSURED_LIST");
-			dataPrep.insertDataIntoSource(insuredListSqlFile, 1, null);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		logger.info(">>> DataPrep t_contract_bene !!!");
-		String contractBeneSqlFile = "./data/t_contract_bene.sql";
-		
-		try {
-			DataPrep dataPrep = new DataPrep();
-			
-			dataPrep.truncateSourceTable("PMUSER", "T_CONTRACT_BENE");
-			dataPrep.insertDataIntoSource(contractBeneSqlFile, 1, null);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+	
 }
