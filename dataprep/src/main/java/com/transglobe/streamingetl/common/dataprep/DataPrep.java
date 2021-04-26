@@ -16,26 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import com.transglobe.streamingetl.common.dataprep.util.DbConnectionUtil;
 
-import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.expression.DateValue;
-import net.sf.jsqlparser.expression.DoubleValue;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.JdbcParameter;
-import net.sf.jsqlparser.expression.LongValue;
-import net.sf.jsqlparser.expression.NullValue;
-import net.sf.jsqlparser.expression.StringValue;
-import net.sf.jsqlparser.expression.TimeValue;
-import net.sf.jsqlparser.expression.TimestampValue;
-import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
-import net.sf.jsqlparser.expression.operators.relational.ItemsList;
-import net.sf.jsqlparser.expression.operators.relational.ItemsListVisitor;
-import net.sf.jsqlparser.expression.operators.relational.MultiExpressionList;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.statement.insert.Insert;
-import net.sf.jsqlparser.statement.select.SubSelect;
-import net.sf.jsqlparser.statement.update.Update;
-
 public class DataPrep {
 
 	private static final Logger logger = LoggerFactory.getLogger(DataPrep.class);
@@ -91,10 +71,12 @@ public class DataPrep {
 				i++;
 				try {
 					stmt.execute(sql);
-				
+				} catch (java.sql.SQLIntegrityConstraintViolationException e) {
+					j++;
+					logger.info("    insert count={}, failure count={}, ex={}",i, j);
 				} catch (SQLException e) {
 					j++;
-					logger.info("    insert count={}, failure count={}, ex={}",i, j, ExceptionUtils.getStackTrace(e));
+					logger.info("    insert count={}, failure count={}, ex=unique constraint () violated",i, j, ExceptionUtils.getStackTrace(e));
 				}
 				//stmt.addBatch(sql);
 
