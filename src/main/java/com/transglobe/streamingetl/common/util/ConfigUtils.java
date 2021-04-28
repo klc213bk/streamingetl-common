@@ -1,4 +1,4 @@
-package com.transglobe.streamingetl.common.dataprep.util;
+package com.transglobe.streamingetl.common.util;
 
 import java.io.InputStream;
 import java.util.Properties;

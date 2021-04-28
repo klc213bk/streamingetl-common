@@ -7,7 +7,7 @@
 	<groupId>com.transglobe.streamingetl.common</groupId>
 	<artifactId>streamingetl-common</artifactId>
 	<version>1.0</version>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<name>streamingetl-common</name>
 	<!-- FIXME change it to the project's website -->
 	<url>http://www.example.com</url>
@@ -99,7 +99,4 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	<modules>
-		<module>dataprep</module>
-	</modules>
 </project>
