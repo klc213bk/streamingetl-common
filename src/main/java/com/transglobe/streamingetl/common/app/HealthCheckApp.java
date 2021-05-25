@@ -1,5 +1,6 @@
 package com.transglobe.streamingetl.common.app;
 
+import java.io.Console;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,7 +14,7 @@ public class HealthCheckApp {
 	private static final String CONFIG_FILE_NAME = "config.properties";
 
 	private Config config;
-	
+
 	public HealthCheckApp(String configFile) throws Exception {
 		config = Config.getConfig(configFile);
 	}
@@ -22,33 +23,46 @@ public class HealthCheckApp {
 		Connection sourceConn = null;
 		PreparedStatement pstmt = null;
 		String sql = "";
-		try {
-			Class.forName(config.sourceDbDriver);
-			//	logger.info(">>driver={}, sourceDbUrl={},sourceDbUsername={},sourceDbPassword={}", config.sourceDbDriver, config.sourceDbUrl, config.sourceDbUsername, config.sourceDbPassword);
-			sourceConn = DriverManager.getConnection(config.sourceDbUrl, config.sourceDbUsername, config.sourceDbPassword);
+		Console console = null;
+		while (true) {
+			try {
+				Class.forName(config.sourceDbDriver);
+				//	logger.info(">>driver={}, sourceDbUrl={},sourceDbUsername={},sourceDbPassword={}", config.sourceDbDriver, config.sourceDbUrl, config.sourceDbUsername, config.sourceDbPassword);
+				sourceConn = DriverManager.getConnection(config.sourceDbUrl, config.sourceDbUsername, config.sourceDbPassword);
 
-			sourceConn.setAutoCommit(false);
+				sourceConn.setAutoCommit(false);
 
-			sql = "insert into " + config.sourceTableStreamingEtlHealthCdc
-					+ " (cdc_time) " 
-					+ " values (?)";
-			pstmt = sourceConn.prepareStatement(sql);
-			pstmt.setLong(1, System.currentTimeMillis());
-			pstmt.executeUpdate();
-			
-			pstmt.close();
-			
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			if (sourceConn != null) {
-				try {
-					sourceConn.close();
-				} catch (SQLException e) {
-					throw e;
+				long time = System.currentTimeMillis();
+				sql = "insert into " + config.sourceTableStreamingEtlHealthCdc
+						+ " (cdc_time) " 
+						+ " values (?)";
+				pstmt = sourceConn.prepareStatement(sql);
+				pstmt.setLong(1, time);
+				pstmt.executeUpdate();
+				sourceConn.commit();
+				
+				pstmt.close();
+				
+				console = System.console();
+				console.printf(" %d ", time);
+				console.flush();
+
+				
+				Thread.sleep(60000);
+				
+
+			} catch (Exception e) {
+				throw e;
+			} finally {
+				if (sourceConn != null) {
+					try {
+						sourceConn.close();
+					} catch (SQLException e) {
+						throw e;
+					}
 				}
+
 			}
-			
 		}
 	}
 
