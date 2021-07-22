@@ -5,12 +5,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
 public class HealthCheckApp {
+	
 	private static final String CONFIG_FILE_NAME = "config.properties";
 
 	private Config config;
@@ -26,14 +25,14 @@ public class HealthCheckApp {
 		Console console = null;
 		while (true) {
 			try {
-				Class.forName(config.sourceDbDriver);
-				//	logger.info(">>driver={}, sourceDbUrl={},sourceDbUsername={},sourceDbPassword={}", config.sourceDbDriver, config.sourceDbUrl, config.sourceDbUsername, config.sourceDbPassword);
-				sourceConn = DriverManager.getConnection(config.sourceDbUrl, config.sourceDbUsername, config.sourceDbPassword);
+				Class.forName(config.logminerDbDriver);
+				
+				sourceConn = DriverManager.getConnection(config.logminerDbUrl, config.logminerDbUsername, config.logminerDbPassword);
 
 				sourceConn.setAutoCommit(false);
 
 				long time = System.currentTimeMillis();
-				sql = "insert into " + config.sourceTableStreamingEtlHealthCdc
+				sql = "insert into " + config.logminerTableStreamingEtlHealthCdc
 						+ " (cdc_time) " 
 						+ " values (?)";
 				pstmt = sourceConn.prepareStatement(sql);
