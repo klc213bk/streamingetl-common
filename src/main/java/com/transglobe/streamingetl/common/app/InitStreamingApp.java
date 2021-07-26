@@ -24,38 +24,25 @@ public class InitStreamingApp {
 
 	private static final String CONFIG_FILE_NAME = "config.properties";
 
-	private static final String LOGMINER_TABLE_STREAMING_ETL_HEALTH_TABLE_FILE_NAME = "logminertable-T_STREAMING_ETL_HEALTH_CDC.sql";
-//	private static final String LOGMINER_TABLE_SUPPL_LOG_SYNC_FILE_NAME = "logminertable-T_SUPPL_LOG_SYNC.sql";
-//	
+	private static final String LOGMINER_SCN_TABLE_FILE_NAME = "logminertable-T_LOGMINER_SCN.sql";
+	
 	private Config config;
 
 	public InitStreamingApp(String configFile) throws Exception {
 		config = Config.getConfig(configFile);
 	}
 	private void init() throws Exception {
-		String tableName = config.logminerTableStreamingEtlHealthCdc;
-		logger.info(">>> check table exists:{}", tableName);
+		String tableName = config.logminerTableLogminerScn;
+		logger.info(">>> check if table exists:{}", tableName);
 		if (!checkTableExists(tableName)) {
-			logger.info(">>> table:{}, does not exists", tableName);
+			logger.info(">>> table:{} does not exist. Create table!!!", tableName);
 			// create table
-			String tableFileName = LOGMINER_TABLE_STREAMING_ETL_HEALTH_TABLE_FILE_NAME;
-			logger.info(">>> create table:{}", tableFileName);
+			String tableFileName = LOGMINER_SCN_TABLE_FILE_NAME;
 			createTable(tableFileName);
+			logger.info(">>> table:{} is created from file={}.", tableName, tableFileName );
 		} else {
-			logger.info(">>> table:{}, exists", tableName);
+			logger.info(">>> table:{} is already existed.", tableName);
 		}
-
-//		tableName = config.logminerTableSupplLogSync;
-//		logger.info(">>> check table exists:{}", tableName);
-//		if (!checkTableExists(tableName)) {
-//			logger.info(">>> table:{}, does not exists", tableName);
-//			// create table
-//			String tableFileName = LOGMINER_TABLE_SUPPL_LOG_SYNC_FILE_NAME;
-//			logger.info(">>> create table:{}", tableFileName);
-//			createTable(tableFileName);
-//		} else {
-//			logger.info(">>> table:{}, exists", tableName);
-//		}
 	}
 	private void createTable(String createTableFile) throws Exception {
 		Connection sourceConn = null;

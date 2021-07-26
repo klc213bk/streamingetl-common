@@ -32,9 +32,8 @@ public class HealthCheckApp {
 				sourceConn.setAutoCommit(false);
 
 				long time = System.currentTimeMillis();
-				sql = "insert into " + config.logminerTableStreamingEtlHealthCdc
-						+ " (cdc_time) " 
-						+ " values (?)";
+				sql = "update " + config.logminerTableLogminerScn
+						+ " set health_time=?";
 				pstmt = sourceConn.prepareStatement(sql);
 				pstmt.setLong(1, time);
 				pstmt.executeUpdate();

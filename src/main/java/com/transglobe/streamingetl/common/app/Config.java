@@ -11,20 +11,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class Config {
 	
-	public String sourceTableStreamingEtlHealthCdc;
-
-	public String sourceDbDriver;
-	public String sourceDbUrl;
-	public String sourceDbUsername;
-	public String sourceDbPassword;
-	
 	public String logminerDbDriver;
 	public String logminerDbUrl;
 	public String logminerDbUsername;
 	public String logminerDbPassword;
 	
-	public String logminerTableStreamingEtlHealthCdc;
-	public String logminerTableSupplLogSync;
+	public String logminerTableLogminerScn;
 
 
 	public static Config getConfig(String fileName) throws Exception {
@@ -44,18 +36,8 @@ public class Config {
 			config.logminerDbUsername = prop.getProperty("logminer.db.username");
 			config.logminerDbPassword = prop.getProperty("logminer.db.password");
 			
-			config.logminerTableStreamingEtlHealthCdc = prop.getProperty("logminer.table.streaming_etl_health_cdc");
-			config.logminerTableSupplLogSync = prop.getProperty("logminer.table.suppl_log_sync");
-			
-			
-			/*
-			config.sourceTableStreamingEtlHealthCdc = prop.getProperty("source.table.streaming_etl_health_cdc");
-
-			config.sourceDbDriver = prop.getProperty("source.db.driver");
-			config.sourceDbUrl = prop.getProperty("source.db.url");
-			config.sourceDbUsername = prop.getProperty("source.db.username");
-			config.sourceDbPassword = prop.getProperty("source.db.password");
-			*/
+			config.logminerTableLogminerScn = prop.getProperty("logminer.table.logminer_scn");
+		
 			return config;
 		} catch (Exception e) {
 			throw e;
