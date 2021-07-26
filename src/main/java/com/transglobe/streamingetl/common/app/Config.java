@@ -10,14 +10,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 
 public class Config {
-
-	public String logminerDbDriver;
-	public String logminerDbUrl;
-	public String logminerDbUsername;
-	public String logminerDbPassword;
-	
-	public String logminerTableStreamingEtlHealthCdc;
-	public String logminerTableStreamingRegister;
 	
 	public String sourceTableStreamingEtlHealthCdc;
 
@@ -25,6 +17,15 @@ public class Config {
 	public String sourceDbUrl;
 	public String sourceDbUsername;
 	public String sourceDbPassword;
+	
+	public String logminerDbDriver;
+	public String logminerDbUrl;
+	public String logminerDbUsername;
+	public String logminerDbPassword;
+	
+	public String logminerTableStreamingEtlHealthCdc;
+	public String logminerTableSupplLogSync;
+
 
 	public static Config getConfig(String fileName) throws Exception {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -44,7 +45,7 @@ public class Config {
 			config.logminerDbPassword = prop.getProperty("logminer.db.password");
 			
 			config.logminerTableStreamingEtlHealthCdc = prop.getProperty("logminer.table.streaming_etl_health_cdc");
-			config.logminerTableStreamingRegister = prop.getProperty("logminer.table.streaming_register");
+			config.logminerTableSupplLogSync = prop.getProperty("logminer.table.suppl_log_sync");
 			
 			
 			/*
