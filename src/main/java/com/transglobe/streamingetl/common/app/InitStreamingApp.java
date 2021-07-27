@@ -31,7 +31,7 @@ public class InitStreamingApp {
 	public InitStreamingApp(String configFile) throws Exception {
 		config = Config.getConfig(configFile);
 	}
-	private void init() throws Exception {
+	private void createTable() throws Exception {
 		String tableName = config.logminerTableLogminerScn;
 		logger.info(">>> check if table exists:{}", tableName);
 		if (!checkTableExists(tableName)) {
@@ -40,9 +40,38 @@ public class InitStreamingApp {
 			String tableFileName = LOGMINER_SCN_TABLE_FILE_NAME;
 			createTable(tableFileName);
 			logger.info(">>> table:{} is created from file={}.", tableName, tableFileName );
+			
+			//  add supplemental log
+			logger.info(">>> add supplemental log");
+			addSupplementalLog(tableName);
 		} else {
 			logger.info(">>> table:{} is already existed.", tableName);
 		}
+		
+		
+	}
+	private void addSupplementalLog(String tableName) throws Exception {
+		Connection conn = null;
+		Statement stmt = null;
+		String sql = null;
+		try {
+			Class.forName(config.logminerDbDriver);
+
+			conn = DriverManager.getConnection(config.logminerDbUrl, config.logminerDbUsername, config.logminerDbPassword);
+			stmt = conn.createStatement();
+			sql = "ALTER TABLE TGLMINER.T_LOGMINER_SCN ADD SUPPLEMENTAL LOG DATA(ALL) COLUMNS";
+			stmt.execute(sql);
+			
+			
+		} catch (Exception e) {
+			
+			throw e;
+		} finally {
+			if (stmt != null) stmt.close();
+			if (conn != null) conn.close();
+		}
+
+
 	}
 	private void createTable(String createTableFile) throws Exception {
 		Connection sourceConn = null;
@@ -136,7 +165,7 @@ public class InitStreamingApp {
 
 			app = new InitStreamingApp(configFile);
 
-			app.init();
+			app.createTable();
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,18 +32,18 @@ public class HealthCheckApp {
 
 				sourceConn.setAutoCommit(false);
 
-				long time = System.currentTimeMillis();
+				long t = System.currentTimeMillis();
 				sql = "update " + config.logminerTableLogminerScn
 						+ " set health_time=?";
 				pstmt = sourceConn.prepareStatement(sql);
-				pstmt.setLong(1, time);
+				pstmt.setTimestamp(1, new Timestamp(t));
 				pstmt.executeUpdate();
 				sourceConn.commit();
 				
 				pstmt.close();
 				
 				console = System.console();
-				console.printf(" %d ", time);
+				console.printf(" %d ", t);
 				console.flush();
 
 				
