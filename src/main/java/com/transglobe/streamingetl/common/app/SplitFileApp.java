@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang3.StringUtils;
 
 public class SplitFileApp {
 
@@ -111,21 +112,30 @@ public class SplitFileApp {
 	}
 	private void listError() throws IOException {
 		
-		String txt = null;
-		Pattern pattern = Pattern.compile("error");   
+		String searchStr = "error";
+	
+		System.out.println("splitFile size= " + splitFileNameList.size() +", search String=" + searchStr);
 
-		System.out.println("splitFile size= " + splitFileNameList.size());
-
+		int lineNum = 0;
 		for (String searchFileName : splitFileNameList) {
-			Scanner txtscan = new Scanner(new File(searchFileName));
-			int line = 0;
-			while ((txt = txtscan.findWithinHorizon(pattern,0)) != null)   {
-				System.out.println(searchFileName + ",line " + line + " :: " + txt);
-				line++;
+			Scanner scanner = new Scanner(new File(searchFileName));
+			
+			lineNum = 0;
+			boolean found = false;
+			while (scanner.hasNextLine()) {
+				lineNum++;
+				String line = scanner.nextLine();
+				if(StringUtils.containsIgnoreCase(line, searchStr)) {
+					found = true;
+					System.out.println(searchFileName + ",line# " + lineNum + " :: " + searchStr);
+
+				} 
 			}
-			if (line == 0) {
-				System.out.println(searchFileName + " found no error");
+			if (!found) {
+				System.out.println(searchFileName + " found no match");
 			}
+			
+			scanner.close();
 		}
 	}
 }
