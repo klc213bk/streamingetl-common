@@ -25,7 +25,7 @@ public class InitStreamingApp {
 	private static final String CONFIG_FILE_NAME = "config.properties";
 
 	private static final String LOGMINER_SCN_TABLE_FILE_NAME = "logminertable-T_LOGMINER_SCN.sql";
-	
+
 	private Config config;
 
 	public InitStreamingApp(String configFile) throws Exception {
@@ -34,21 +34,24 @@ public class InitStreamingApp {
 	private void createTable() throws Exception {
 		String tableName = config.logminerTableLogminerScn;
 		logger.info(">>> check if table exists:{}", tableName);
-		if (!checkTableExists(tableName)) {
-			logger.info(">>> table:{} does not exist. Create table!!!", tableName);
-			// create table
-			String tableFileName = LOGMINER_SCN_TABLE_FILE_NAME;
-			createTable(tableFileName);
-			logger.info(">>> table:{} is created from file={}.", tableName, tableFileName );
-			
-			//  add supplemental log
-			logger.info(">>> add supplemental log");
-			addSupplementalLog(tableName);
+		if (checkTableExists(tableName)) {
+			logger.info(">>> table:{} already exists. drop table", tableName);
+			dropTable(tableName);
+			logger.info(">>> table:{} dropped.", tableName);
 		} else {
-			logger.info(">>> table:{} is already existed.", tableName);
+			logger.info(">>> table:{} does not exist. ", tableName);
 		}
 		
-		
+		logger.info(">>> Create table!!!", tableName);
+		// create table
+		String tableFileName = LOGMINER_SCN_TABLE_FILE_NAME;
+		createTable(tableFileName);
+		logger.info(">>> table:{} is created from file={}.", tableName, tableFileName );
+
+		//  add supplemental log
+		logger.info(">>> add supplemental log");
+		addSupplementalLog(tableName);
+
 	}
 	private void addSupplementalLog(String tableName) throws Exception {
 		Connection conn = null;
@@ -61,10 +64,10 @@ public class InitStreamingApp {
 			stmt = conn.createStatement();
 			sql = "ALTER TABLE TGLMINER.T_LOGMINER_SCN ADD SUPPLEMENTAL LOG DATA(ALL) COLUMNS";
 			stmt.execute(sql);
-			
-			
+
+
 		} catch (Exception e) {
-			
+
 			throw e;
 		} finally {
 			if (stmt != null) stmt.close();
@@ -86,17 +89,39 @@ public class InitStreamingApp {
 			ClassLoader loader = Thread.currentThread().getContextClassLoader();	
 			inputStream = loader.getResourceAsStream(createTableFile);
 			sql = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-			
+
 			stmt = sourceConn.createStatement();
-			
+
 			stmt.execute(sql);
 		} catch (Exception e) {
-			
+
 			throw e;
 		} finally {
 			if (inputStream != null) inputStream.close();
 			if (stmt != null) stmt.close();
 			if (sourceConn != null) sourceConn.close();
+		}
+
+
+	}
+	private void dropTable(String tableName) throws Exception {
+		Connection conn = null;
+		Statement stmt = null;
+		String sql = null;
+		try {
+			Class.forName(config.logminerDbDriver);
+
+			conn = DriverManager.getConnection(config.logminerDbUrl, config.logminerDbUsername, config.logminerDbPassword);
+			stmt = conn.createStatement();
+			sql = "DROP TABLE " + tableName;
+			stmt.execute(sql);
+
+		} catch (Exception e) {
+
+			throw e;
+		} finally {
+			if (stmt != null) stmt.close();
+			if (conn != null) conn.close();
 		}
 
 
@@ -154,7 +179,7 @@ public class InitStreamingApp {
 		}
 		return exists;
 	}
-	
+
 
 	public static void main(String[] args) {
 		String profileActive = System.getProperty("profile.active", "");
