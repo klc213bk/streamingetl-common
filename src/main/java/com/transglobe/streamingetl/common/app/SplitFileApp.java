@@ -23,6 +23,10 @@ public class SplitFileApp {
 
 	private static String FILE_NAME = "/home/steven/logs/pcr420669-consumer/pcr420669-consumer.log";
 
+	private static String searchStr = "36275356";
+	
+	private static long numSplits = 100; //from user input, extract it from args
+	
 	private List<String> splitFileNameList = new ArrayList<>();
 
 	public static void main(String[] args) {
@@ -61,7 +65,7 @@ public class SplitFileApp {
 	{
 		String filename= FILE_NAME;
 		RandomAccessFile raf = new RandomAccessFile(filename, "r");
-		long numSplits = 100; //from user input, extract it from args
+
 		long sourceSize = raf.length();
 		System.out.println("sourceSize:" + sourceSize);
 
@@ -111,8 +115,6 @@ public class SplitFileApp {
 		}
 	}
 	private void listError() throws IOException {
-		
-		String searchStr = "error";
 	
 		System.out.println("splitFile size= " + splitFileNameList.size() +", search String=" + searchStr);
 

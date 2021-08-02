@@ -35,22 +35,21 @@ public class InitStreamingApp {
 		String tableName = config.logminerTableLogminerScn;
 		logger.info(">>> check if table exists:{}", tableName);
 		if (checkTableExists(tableName)) {
-			logger.info(">>> table:{} already exists. drop table", tableName);
-			dropTable(tableName);
-			logger.info(">>> table:{} dropped.", tableName);
+			logger.info(">>> table:{} already exists.", tableName);
 		} else {
-			logger.info(">>> table:{} does not exist. ", tableName);
-		}
-		
-		logger.info(">>> Create table!!!", tableName);
-		// create table
-		String tableFileName = LOGMINER_SCN_TABLE_FILE_NAME;
-		createTable(tableFileName);
-		logger.info(">>> table:{} is created from file={}.", tableName, tableFileName );
+			logger.info(">>> table:{} does not exist.", tableName);
 
-		//  add supplemental log
-		logger.info(">>> add supplemental log");
-		addSupplementalLog(tableName);
+
+			logger.info(">>> Create table!!!", tableName);
+			// create table
+			String tableFileName = LOGMINER_SCN_TABLE_FILE_NAME;
+			createTable(tableFileName);
+			logger.info(">>> table:{} is created from file={}.", tableName, tableFileName );
+
+			//  add supplemental log
+			logger.info(">>> add supplemental log");
+			addSupplementalLog(tableName);
+		}
 
 	}
 	private void addSupplementalLog(String tableName) throws Exception {
@@ -104,28 +103,28 @@ public class InitStreamingApp {
 
 
 	}
-	private void dropTable(String tableName) throws Exception {
-		Connection conn = null;
-		Statement stmt = null;
-		String sql = null;
-		try {
-			Class.forName(config.logminerDbDriver);
-
-			conn = DriverManager.getConnection(config.logminerDbUrl, config.logminerDbUsername, config.logminerDbPassword);
-			stmt = conn.createStatement();
-			sql = "DROP TABLE " + tableName;
-			stmt.execute(sql);
-
-		} catch (Exception e) {
-
-			throw e;
-		} finally {
-			if (stmt != null) stmt.close();
-			if (conn != null) conn.close();
-		}
-
-
-	}
+	//	private void dropTable(String tableName) throws Exception {
+	//		Connection conn = null;
+	//		Statement stmt = null;
+	//		String sql = null;
+	//		try {
+	//			Class.forName(config.logminerDbDriver);
+	//
+	//			conn = DriverManager.getConnection(config.logminerDbUrl, config.logminerDbUsername, config.logminerDbPassword);
+	//			stmt = conn.createStatement();
+	//			sql = "DROP TABLE " + tableName;
+	//			stmt.execute(sql);
+	//
+	//		} catch (Exception e) {
+	//
+	//			throw e;
+	//		} finally {
+	//			if (stmt != null) stmt.close();
+	//			if (conn != null) conn.close();
+	//		}
+	//
+	//
+	//	}
 	private boolean checkTableExists(String tableName) throws Exception {
 		Connection sourceConn = null;
 		PreparedStatement pstmt = null;
@@ -193,8 +192,7 @@ public class InitStreamingApp {
 			app.createTable();
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(">>> message={}, stack trace={}, record str={}", e.getMessage(), ExceptionUtils.getStackTrace(e));
 		}
 	}
 

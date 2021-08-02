@@ -8,8 +8,12 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HealthCheckApp {
+	private static final Logger logger = LoggerFactory.getLogger(HealthCheckApp.class);
 	
 	private static final String CONFIG_FILE_NAME = "config.properties";
 
@@ -51,6 +55,7 @@ public class HealthCheckApp {
 				
 
 			} catch (Exception e) {
+				logger.error(">>> message={}, stack trace={}, record str={}", e.getMessage(), ExceptionUtils.getStackTrace(e));
 				throw e;
 			} finally {
 				if (sourceConn != null) {
