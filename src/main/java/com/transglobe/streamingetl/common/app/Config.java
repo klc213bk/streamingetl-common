@@ -17,6 +17,8 @@ public class Config {
 	public String logminerDbPassword;
 	
 	public String logminerTableLogminerScn;
+	
+	public String logminerTableLogmnrContentsLog;
 
 
 	public static Config getConfig(String fileName) throws Exception {
@@ -37,6 +39,8 @@ public class Config {
 			config.logminerDbPassword = prop.getProperty("logminer.db.password");
 			
 			config.logminerTableLogminerScn = prop.getProperty("logminer.table.logminer_scn");
+			
+			config.logminerTableLogmnrContentsLog = prop.getProperty("logminer.table.logmnr_contents_log");
 		
 			return config;
 		} catch (Exception e) {
