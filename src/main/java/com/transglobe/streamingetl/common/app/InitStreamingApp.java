@@ -27,8 +27,8 @@ public class InitStreamingApp {
 	private static final String CONFIG_FILE_NAME = "config.properties";
 
 	private static final String LOGMINER_SCN_TABLE_FILE_NAME = "logminertable-T_LOGMINER_SCN.sql";
-	private static final String LOGMINR_CONTENTS_LOG_TABLE_FILE_NAME = "logminertable-LOGMNR_CONTENTS_LOG.sql";
-	private static final String LOGMINR_CONTENTS_LOG_INDEX_FILE_NAME = "logminerindex-LOGMNR_CONTENTS_LOG.sql";
+//	private static final String LOGMINR_CONTENTS_LOG_TABLE_FILE_NAME = "logminertable-LOGMNR_CONTENTS_LOG.sql";
+//	private static final String LOGMINR_CONTENTS_LOG_INDEX_FILE_NAME = "logminerindex-LOGMNR_CONTENTS_LOG.sql";
 
 	private Config config;
 
@@ -68,42 +68,42 @@ public class InitStreamingApp {
 		}
 
 	}
-	private void createLogminrContentsLogTable() throws Exception {
-		Connection conn = null;
-		try {
-			Class.forName(config.logminerDbDriver);
-
-			conn = DriverManager.getConnection(config.logminerDbUrl, config.logminerDbUsername, config.logminerDbPassword);
-
-			String tableName = config.logminerTableLogmnrContentsLog;
-			logger.info(">>> check if table exists:{}", tableName);
-			if (checkTableExists(tableName)) {
-				logger.info(">>> table:{} already exists.", tableName);
-			} else {
-				logger.info(">>> table:{} does not exist.", tableName);
-
-
-				logger.info(">>> Create table!!!", tableName);
-				// create table
-				String tableFileName = LOGMINR_CONTENTS_LOG_TABLE_FILE_NAME;
-				OracleUtils.executeScriptFromFile(tableFileName, conn);
-				logger.info(">>> table:{} is created from file={}.", tableName, tableFileName );
-
-				// create index
-				String indexFileName = LOGMINR_CONTENTS_LOG_INDEX_FILE_NAME;
-				OracleUtils.executeScriptFromFile(indexFileName, conn);
-				logger.info(">>> indexes is created from file={}.", indexFileName );
-
-				
-			}
-		} catch (Exception e) {
-
-			throw e;
-		} finally {
-			if (conn != null) conn.close();
-		}
-
-	}
+//	private void createLogminrContentsLogTable() throws Exception {
+//		Connection conn = null;
+//		try {
+//			Class.forName(config.logminerDbDriver);
+//
+//			conn = DriverManager.getConnection(config.logminerDbUrl, config.logminerDbUsername, config.logminerDbPassword);
+//
+//			String tableName = config.logminerTableLogmnrContentsLog;
+//			logger.info(">>> check if table exists:{}", tableName);
+//			if (checkTableExists(tableName)) {
+//				logger.info(">>> table:{} already exists.", tableName);
+//			} else {
+//				logger.info(">>> table:{} does not exist.", tableName);
+//
+//
+//				logger.info(">>> Create table!!!", tableName);
+//				// create table
+//				String tableFileName = LOGMINR_CONTENTS_LOG_TABLE_FILE_NAME;
+//				OracleUtils.executeScriptFromFile(tableFileName, conn);
+//				logger.info(">>> table:{} is created from file={}.", tableName, tableFileName );
+//
+//				// create index
+//				String indexFileName = LOGMINR_CONTENTS_LOG_INDEX_FILE_NAME;
+//				OracleUtils.executeScriptFromFile(indexFileName, conn);
+//				logger.info(">>> indexes is created from file={}.", indexFileName );
+//
+//				
+//			}
+//		} catch (Exception e) {
+//
+//			throw e;
+//		} finally {
+//			if (conn != null) conn.close();
+//		}
+//
+//	}
 
 	private void addSupplementalLog(String tableName, Connection conn) throws Exception {
 		Statement stmt = null;
@@ -212,7 +212,7 @@ public class InitStreamingApp {
 
 			app.createLogminerScnTable();
 
-			app.createLogminrContentsLogTable();
+//			app.createLogminrContentsLogTable();
 
 		} catch (Exception e) {
 			logger.error(">>> message={}, stack trace={}, record str={}", e.getMessage(), ExceptionUtils.getStackTrace(e));
