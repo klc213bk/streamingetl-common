@@ -20,6 +20,30 @@ import org.slf4j.LoggerFactory;
 public class OracleUtils {
 	private static final Logger logger = LoggerFactory.getLogger(OracleUtils.class);
 	
+	public static Long getCurentrScn(Connection conn) throws Exception {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql = "";
+		Long currentScn = null;
+		try {
+			sql = "select CURRENT_SCN from gv$database";
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				currentScn = rs.getLong("CURRENT_SCN");
+			}
+			rs.close();
+			pstmt.close();
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (rs != null) rs.close();
+			if (pstmt != null) pstmt.close();
+
+		}
+		return currentScn;
+		
+	}
 	public static boolean checkTableExists(String tableName, Connection sourceConn) throws Exception {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
